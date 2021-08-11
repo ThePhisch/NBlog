@@ -11,3 +11,4 @@ class Post(pydantic.BaseModel):
     title: str
     date: datetime
     content: str
+    hash: str

@@ -4,6 +4,7 @@ It calls on the blogware package for the methods.
 """
 
 from blogware.writer import Writer
+from blogware.post import Post
 import blogware.inputs
 
 LOCATION = "output/"
@@ -13,9 +14,9 @@ INPUTS = "input/"
 if __name__ == "__main__":
     print("running Nblog!")
     writer = Writer(LOCATION, TITLE)
-    writer.writeMain()
+    writer.writeMain(
+        blogware.inputs.processNewPosts(INPUTS)
+    )
 
-    print(blogware.inputs.processNewPosts(INPUTS))
-
-
-
+    sample: Post = blogware.inputs.processNewPosts(INPUTS)[0]
+    print(writer.writePost(sample))
