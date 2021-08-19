@@ -2,18 +2,20 @@
 Contains the methods to actually write the files to disk
 """
 from functools import reduce
+import json
 from blogware.post import Post
 from datetime import datetime
 
 
 class Writer:
-    def __init__(self, loc, title) -> None:
+    def __init__(self, loc, title) -> str:
         self.loc = loc
         self.title = title
 
         self.mainloc = loc + "main.html"
+        self.dumploc = loc + "dump.json"
 
-    def writeMain(self, posts: list[Post]) -> None:
+    def writeMain(self) -> None:
         start: str = f"""
 <!DOCTYPE html>
 <html>
@@ -35,25 +37,27 @@ class Writer:
 """
 
         postpart: str = reduce(
-            lambda x, y: x + y, map(lambda x: self.writePost(x), posts)
+            lambda x, y: x + y, map(lambda x: x.returnPost(), self.posts)
         )
 
         end: str = f"""
 </body>
 </html>
     """
-        # TODO: make this entire function export a string, write this string with function from somewhere else
-        with open(self.mainloc, "w") as f:
-            f.write(start)
-            f.write(toppart)
-            f.write(postpart)
-            f.write(end)
+        return start + toppart + postpart + end
 
-    def writePost(self, post: Post) -> str:
-        out = f"""
-<div id={post.hash} class='Post'>
-<h4>{post.title}, {post.date.strftime("%d.%m.%Y")}</h4>
-<p>{post.content}</p>
-</div>
-        """
-        return out
+    def writeDump(self) -> str:
+        dumppart: str = json.dumps(
+            list(map(lambda x: x.simplifyForDumping(), self.posts))
+        )
+        return dumppart
+
+    @staticmethod
+    def writeIt(destination: str, towrite: str) -> None:
+        with open(destination, "w") as f:
+            f.write(towrite)
+
+    def execute(self, posts: list[Post]) -> None:
+        self.posts = posts
+        self.writeIt(self.mainloc, self.writeMain())
+        self.writeIt(self.dumploc, self.writeDump())

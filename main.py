@@ -14,9 +14,4 @@ INPUTS = "input/"
 if __name__ == "__main__":
     print("running Nblog!")
     writer = Writer(LOCATION, TITLE)
-    writer.writeMain(
-        blogware.inputs.processNewPosts(INPUTS)
-    )
-
-    sample: Post = blogware.inputs.processNewPosts(INPUTS)[0]
-    print(writer.writePost(sample))
+    writer.execute(blogware.inputs.processNewPosts(INPUTS))
