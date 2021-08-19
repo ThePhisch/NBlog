@@ -3,7 +3,7 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        ".",
+        "./blogware",
         "-p",
         "*_test.py"
     ],

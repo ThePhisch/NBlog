@@ -19,6 +19,13 @@ class Post:
             self.content + self.title + self.date.strftime("%H:%M")
         )
 
+    """
+    NOTE
+    create additional constructor (maybe with a classmethod)
+    that allows to parse the saved post data, in particular
+    this method needs to be able take an old hash
+    """
+
     @staticmethod
     def hashcalc(tohash: str) -> str:
         h: blake2b = blake2b(digest_size=4)
@@ -27,7 +34,6 @@ class Post:
 
     @staticmethod
     def markdowning(tomarkdown: str) -> str:
-        print(markdown2.markdown(tomarkdown))
         return markdown2.markdown(tomarkdown)
 
     def returnPost(self) -> str:
