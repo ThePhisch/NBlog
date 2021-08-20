@@ -19,13 +19,6 @@ class Post:
                 self.content + self.title + self.date.strftime("%H:%M")
             )
 
-    """
-    NOTE
-    create additional constructor (maybe with a classmethod)
-    that allows to parse the saved post data, in particular
-    this method needs to be able take an old hash
-    """
-
     @classmethod
     def parsingConstructor(cls, **kwargs) -> "Post":
         p: Post = cls(kwargs["title"], kwargs["content"], parsing=True)
@@ -43,12 +36,12 @@ class Post:
     def markdowning(tomarkdown: str) -> str:
         return markdown2.markdown(tomarkdown)
 
-    def returnPost(self) -> str:
+    def returnPost(self, linkDest: str = "") -> str:
         postString: str = f"""
-<div id={self.hash} class="Post">
-    <h4>{self.title}, {self.date.strftime("%d.%m.%Y %H:%M")}</h4>
-    {self.markdowning(self.content)}
-</div>
+        <div id={self.hash} class="Post">
+        <h4><a href="{linkDest}">[l]</a> {self.title}, {self.date.strftime("%d.%m.%Y")}</h4>
+        {self.markdowning(self.content)}
+        </div>
         """
         return postString
 

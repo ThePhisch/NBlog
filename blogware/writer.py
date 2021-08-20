@@ -15,6 +15,8 @@ class Writer:
         self.posts = posts
         self.mainloc = loc + "main.html"
         self.dumploc = loc + "dump.json"
+        self.archiveP = "p/"
+        self.archiveQ = "q/"
         self.style = "{ width: 60%; margin: auto;}"
         self.numOfPostsInMain = 10
 
@@ -41,11 +43,26 @@ class Writer:
         """
         Writes the main page. (Needs to be composed with writePage)
         Adds only the first numOfPostsInMain posts.
+        some effort went into correctly passing the link destination.
         """
         postpart: str = reduce(
-            lambda x, y: x + y, map(lambda x: x.returnPost(), self.posts[:self.numOfPostsInMain])
+            lambda x, y: x + y, map(lambda x: x.returnPost(linkDest=self.archiveP + x.hash), self.posts[:self.numOfPostsInMain])
         )
         return postpart
+
+    def archivePosts(self) -> None:
+        """
+        Writes the posts.
+        TODO make sure to not rewrite the posts that already exist!
+        """
+        for p in self.posts:
+            linkDest: str = self.loc + "/" + self.archiveP + p.hash + ".html"
+            self.writeIt(
+                linkDest,
+                self.writePage(p.returnPost)
+            )
+        return
+        
 
     def writeDump(self) -> str:
         """
@@ -65,3 +82,4 @@ class Writer:
     def execute(self) -> None:
         self.writeIt(self.mainloc, self.writePage(self.writeMain))
         self.writeIt(self.dumploc, self.writeDump())
+        self.archivePosts()
