@@ -6,18 +6,18 @@ including markdown formatting
 from datetime import datetime
 from hashlib import blake2b
 import markdown2
-import json
 
 
 class Post:
-    def __init__(self, title, content) -> None:
+    def __init__(self, title, content, parsing: bool = False) -> None:
         self.title: str = title
         self.content: str = content
 
-        self.date: datetime = datetime.now()
-        self.hash = self.hashcalc(
-            self.content + self.title + self.date.strftime("%H:%M")
-        )
+        if not parsing:
+            self.date: datetime = datetime.now()
+            self.hash = self.hashcalc(
+                self.content + self.title + self.date.strftime("%H:%M")
+            )
 
     """
     NOTE
@@ -25,6 +25,13 @@ class Post:
     that allows to parse the saved post data, in particular
     this method needs to be able take an old hash
     """
+
+    @classmethod
+    def parsingConstructor(cls, **kwargs) -> "Post":
+        p: Post = cls(kwargs["title"], kwargs["content"], parsing=True)
+        p.date = datetime.strptime(kwargs["datetime"], "%d.%m.%Y %H:%M")
+        p.hash = kwargs["hash"]
+        return p
 
     @staticmethod
     def hashcalc(tohash: str) -> str:
@@ -47,8 +54,8 @@ class Post:
 
     def simplifyForDumping(self) -> dict:
         return {
-            "title" : self.title,
-            "content" : self.content,
-            "datetime" : self.date.strftime("%d.%m.%Y %H:%M")
+            "title": self.title,
+            "content": self.content,
+            "datetime": self.date.strftime("%d.%m.%Y %H:%M"),
+            "hash": self.hash,
         }
-    

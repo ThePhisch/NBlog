@@ -8,6 +8,7 @@ from blogware.post import Post
 import blogware.inputs
 
 LOCATION = "output/"
+DUMPFILE = "dump.json"
 TITLE = "NBlog"
 INPUTS = "input/"
 
