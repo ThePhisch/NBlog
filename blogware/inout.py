@@ -60,6 +60,7 @@ def loadTextAndMakePost(loc: str) -> Post:
 
     content: str = loadFile(loc)
     title: str = loc.split("/")[-1][:-4]
+    # TODO: dont source title like this, thats just shit.
 
     new: Post = Post(title, content)
 

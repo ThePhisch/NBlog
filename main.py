@@ -25,9 +25,11 @@ locs = {
 # NOTE if you deploy this, make sure to set the deploy=True flag in link
 if __name__ == "__main__":
     print("running Nblog!")
-    link = Link(locs, "blog.screamsocial.de", deploy=True)
+    link = Link(locs, "blog.screamsocial.de", deploy=False)
     writer = Writer(
-        link, TITLE, blogware.inout.processAllPosts(INPUTS, LOCATION + DUMPFILE)
+        link, TITLE, blogware.inout.processAllPosts(link.inputsL(), link.dumpL())
     )
     writer.execute()
     blogware.inout.deleteInputs(INPUTS)
+
+    writer.quarterlySplit()

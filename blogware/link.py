@@ -20,6 +20,10 @@ class Link:
         filename: str = hash + ".html"
         return str(self.basePath / self.locs["ARCHIVEP"] / filename)
 
+    def quarL(self, quarterId: str) -> str:
+        filename: str = quarterId + ".html"
+        return str(self.basePath / self.locs["ARCHIVEQ"] / filename)
+
     def dumpL(self) -> str:
         return str(self.basePath / self.locs["DUMPFILE"])
 
@@ -34,3 +38,12 @@ class Link:
             return self.mainL()
         else:
             return self.url
+
+    def quarU(self, quarterId: str) -> str:
+        if not self.deploy:
+            return self.quarL(quarterId)
+        else:
+            return self.url + f"/output/q/{quarterId}.html"
+
+    def inputsL(self) -> str:
+        return str(self.basePath / self.locs["INPUTS"])
