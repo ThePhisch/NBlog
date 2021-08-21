@@ -6,3 +6,6 @@
 pyvenv.cfg
 /output/p
 /output/q
+workspace.code-workspace
+/.vscode
+*.html

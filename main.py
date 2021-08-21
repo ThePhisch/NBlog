@@ -3,6 +3,7 @@ This is the main script to be executed.
 It calls on the blogware package for the methods.
 """
 
+from blogware.link import Link
 from blogware.writer import Writer
 from blogware.post import Post
 import blogware.inout
@@ -12,8 +13,21 @@ DUMPFILE: str = "dump.json"
 TITLE: str = "NBlog"
 INPUTS: str = "input/"
 
+locs = {
+    "LOCATION": "output",
+    "DUMPFILE": "output/dump.json",
+    "MAINFILE": "output/main.html",
+    "INPUTS": "input",
+    "ARCHIVEQ": "output/q",
+    "ARCHIVEP": "output/p",
+}
+
+# NOTE if you deploy this, make sure to set the deploy=True flag in link
 if __name__ == "__main__":
     print("running Nblog!")
-    writer = Writer(LOCATION, TITLE, blogware.inout.processAllPosts(INPUTS, LOCATION + DUMPFILE))
+    link = Link(locs, "blog.screamsocial.de", deploy=True)
+    writer = Writer(
+        link, TITLE, blogware.inout.processAllPosts(INPUTS, LOCATION + DUMPFILE)
+    )
     writer.execute()
     blogware.inout.deleteInputs(INPUTS)

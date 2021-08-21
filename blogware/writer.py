@@ -4,23 +4,21 @@ these will be written to disk by IO (different module)
 """
 from functools import reduce
 import json
+from typing import Callable
 from blogware.post import Post
 from datetime import datetime
+from blogware.link import Link
 
 
 class Writer:
-    def __init__(self, loc, title, posts: list[Post]) -> None:
-        self.loc = loc
+    def __init__(self, link: Link, title: str, posts: list[Post]) -> None:
+        self.link = link
         self.title = title
         self.posts = posts
-        self.mainloc = loc + "main.html"
-        self.dumploc = loc + "dump.json"
-        self.archiveP = "p/"
-        self.archiveQ = "q/"
         self.style = "{ width: 60%; margin: auto;}"
         self.numOfPostsInMain = 10
 
-    def writePage(self, content: callable) -> str:
+    def writePage(self, content: Callable[..., str]) -> str:
         return f"""
         <!DOCTYPE html>
         <html>
@@ -31,7 +29,7 @@ class Writer:
             </style>
         </head>
         <body>
-        <h1>{self.title}</h1>
+        <h1><a href="{self.link.mainU()}">{self.title}</a></h1>
         <p>Last updated {datetime.now().strftime("%d.%m.%Y %H:%M")}
         <hr>
         {content()}
@@ -46,7 +44,13 @@ class Writer:
         some effort went into correctly passing the link destination.
         """
         postpart: str = reduce(
-            lambda x, y: x + y, map(lambda x: x.returnPost(linkDest=self.archiveP + x.hash), self.posts[:self.numOfPostsInMain])
+            # Reduce simply concatenates all post strings
+            lambda x, y: x + y,
+            map(
+                # Return post with linkdest for the first numof... posts in array
+                lambda x: x.returnPost(linkDest=self.link.postU(x.hash)),
+                self.posts[: self.numOfPostsInMain],
+            ),
         )
         return postpart
 
@@ -56,13 +60,8 @@ class Writer:
         TODO make sure to not rewrite the posts that already exist!
         """
         for p in self.posts:
-            linkDest: str = self.loc + "/" + self.archiveP + p.hash + ".html"
-            self.writeIt(
-                linkDest,
-                self.writePage(p.returnPost)
-            )
+            self.writeIt(self.link.postL(p.hash), self.writePage(p.returnPost))
         return
-        
 
     def writeDump(self) -> str:
         """
@@ -73,13 +72,12 @@ class Writer:
         )
         return dumppart
 
-    # TODO: move this method to inout (?)
     @staticmethod
     def writeIt(destination: str, towrite: str) -> None:
         with open(destination, "w") as f:
             f.write(towrite)
 
     def execute(self) -> None:
-        self.writeIt(self.mainloc, self.writePage(self.writeMain))
-        self.writeIt(self.dumploc, self.writeDump())
+        self.writeIt(self.link.mainL(), self.writePage(self.writeMain))
+        self.writeIt(self.link.dumpL(), self.writeDump())
         self.archivePosts()
