@@ -4,14 +4,14 @@ these will be written to disk by IO (different module)
 """
 from functools import reduce
 import json
-from typing import Callable
+from typing import Callable, List
 from blogware.post import Post
 from datetime import datetime
 from blogware.link import Link
 
 
 class Writer:
-    def __init__(self, link: Link, title: str, posts: list[Post]) -> None:
+    def __init__(self, link: Link, title: str, posts: List[Post]) -> None:
         self.link = link
         self.title = title
         self.posts = posts
