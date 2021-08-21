@@ -1,6 +1,7 @@
 """
 IO, especiall for the input blog files
 """
+from functools import reduce
 from typing import List
 from blogware.post import Post
 from datetime import datetime
@@ -59,10 +60,9 @@ def makePostFromJSON(jdata: dict) -> Post:
 def loadTextAndMakePost(loc: str) -> Post:
 
     content: str = loadFile(loc)
-    title: str = loc.split("/")[-1][:-4]
-    # TODO: dont source title like this, thats just shit.
+    splitcontent = content.split("\n")
 
-    new: Post = Post(title, content)
+    new: Post = Post(splitcontent[0], reduce(lambda x, y: x + "\n" + y, splitcontent[1:]))
 
     return new
 
